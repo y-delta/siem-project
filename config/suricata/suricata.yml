@@ -1,0 +1,35 @@
+# Condensed default config file from Suricata
+
+# Community Flow ID - DigitalOcean
+community-id: true
+detect-engine:
+  - rule-reload: true
+
+# Network interface configuration
+af-packet:
+  - interface: eth0
+    threads: auto
+
+# Logging and Output
+outputs:
+  - eve-log: 
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+
+# Rule files and management
+default-rule-path: /etc/suricata/rules
+rule-files:
+  - suricata.rules # Change based on the ruleset of your choice
+
+# HOME_NET and EXTERNAL_NET
+vars: 
+  address-groups:
+    HOME_NET: "[192.168.0.0/16]"
+    EXTERNAL_NET: "!$HOME_NET"
+
+# Application layer protocols
+app-layer:
+  protocols:
+    http:
+      enabled: yes

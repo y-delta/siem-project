@@ -37,6 +37,7 @@ output.elasticsearch:
   username: elastic
   password: password # Change
   pipeline: geoip-info # Use if ingest pipeline is present in Elasticsearch
+  # api_key: "id:api_key"
 
 # Logging configuration
 logging.level: info

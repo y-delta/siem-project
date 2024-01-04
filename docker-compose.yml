@@ -19,7 +19,7 @@ services:
 
   kibana:
     container_name: kibana
-    iamge: docker.elastic.co/kibana/kibana:7.10.0
+    image: docker.elastic.co/kibana/kibana:7.10.0
     ports: 
       - 5601:5601
     depends_on:
@@ -32,12 +32,20 @@ services:
       - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
 
 # In-Progress
-  # logstash:
-  #   container_name: logstash
-  #   ports:
-  #     - "5601:5601"
-  #   links:
-  #     - elasticsearch
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    ports:
+      - 5044:5044
+      - 5000:5000/tcp
+      - 5000:5000/udp
+    volumes:
+      - ./config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
 
   suricata:
     build: ./suricata

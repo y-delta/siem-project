@@ -47,6 +47,20 @@ services:
     networks:
       - elastic
 
+  filebeat:
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:7.10.0
+    user: root
+    volumes:
+     - ./config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+     - /var/log/:/host/var/log/:ro
+     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    depends_on:
+      - elasticsearch
+      - logstash
+    networks:
+      - elastic
+
   suricata:
     build: ./suricata
     container_name: suricata
@@ -58,6 +72,7 @@ services:
       - elasticsearch
     networks:
       - elastic
+    restart: always
 
   volumes:
     elasticsearch_data:

@@ -1,0 +1,9 @@
+# Defualt configuration from GitHub
+
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+
+xpack.security_enabled: true
+xpack.security.authc.api_key.enabled: true # Required for Elastic Fleet
+
+bootstrap.memory_lock: true

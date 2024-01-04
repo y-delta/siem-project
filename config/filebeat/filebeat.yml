@@ -1,0 +1,48 @@
+# Filebeat inputs
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+    - /var/log/suricata/*.log
+    # Add specific paths to log files that need monitoring
+
+# Filebeat modules
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+# Processors for additional metadata
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+
+# Setup template
+setup.template.settings:
+  index.number_of_shards: 1
+
+# Setup kibana for dashboard loading
+setup.kibana:
+  host: "kibana:5601"
+  username: elastic
+  password: password # Change
+
+# Elasticsearch output
+output.elasticsearch:
+  hosts: [ "http://elasticsearch:9200" ]
+  username: elastic
+  password: password # Change
+  pipeline: geoip-info # Use if ingest pipeline is present in Elasticsearch
+
+# Logging configuration
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644

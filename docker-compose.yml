@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  elasticsearch:
+    container_name: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - bootstrap.memory_lock=false
+      - ELASTIC_PASSWORD=password #change
+    networks:
+      - elastic
+
+  kibana:
+    container_name: kibana
+    iamge: docker.elastic.co/kibana/kibana:7.10.0
+    ports: 
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 
+    volumes:
+      - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+
+# In-Progress
+  # logstash:
+  #   container_name: logstash
+  #   ports:
+  #     - "5601:5601"
+  #   links:
+  #     - elasticsearch
+
+  suricata:
+    build: ./suricata
+    container_name: suricata
+    network_mode: host
+    volumes:
+      - ./config/suricata/suricata.yml:/etc/suricata/suricata.yml
+      - /var/log/suricata:/var/log/suricata
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  volumes:
+    elasticsearch_data:
+      driver: local
+
+  networks:
+    elastic:
+      driver: bridge
